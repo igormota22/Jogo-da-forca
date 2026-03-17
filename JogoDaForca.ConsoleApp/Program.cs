@@ -53,8 +53,6 @@ acaba.
 
         string palavraAleatoria = palavras[indiceAleatorio];
 
-        System.Console.WriteLine(palavraAleatoria);
-
         return palavraAleatoria;
     }
 
@@ -74,11 +72,15 @@ acaba.
             }
 
             bool jogadorAcertouPalavra = false;
+            bool jogadorPerdeu = false;
 
-            while (jogadorAcertouPalavra == false)
+            int erros = 0;
+
+            while (jogadorPerdeu == false && jogadorAcertouPalavra == false)
             {
 
                 System.Console.WriteLine(letrasAcertadas);
+                System.Console.WriteLine("Tentativas Erradas: " + erros);
 
                 System.Console.Write("Digite uma letra:");
                 string? strLetra = Console.ReadLine();
@@ -92,6 +94,8 @@ acaba.
 
                 char letraChute = Convert.ToChar(strLetra.ToUpper());
 
+                bool letraFoiEncontrada = false;
+
                 for (int contador = 0; contador < pavraAleatoria.Length; contador++)
                 {
                     char letraAtual = pavraAleatoria[contador];
@@ -99,9 +103,27 @@ acaba.
                     if (letraChute == letraAtual)
                     {
                         letrasAcertadas[contador] = letraAtual;
+                        letraFoiEncontrada = true;
                     }
+                    
                 }
+
+                if (letraFoiEncontrada == false)
+                {
+                    erros++;
+                }
+
                 jogadorAcertouPalavra = pavraAleatoria == string.Join("", letrasAcertadas);
+                jogadorPerdeu = erros > 5;
+            }
+
+            if (jogadorAcertouPalavra)
+            {
+                System.Console.WriteLine($"Parabens, a palavra secreta era: {pavraAleatoria}.Voce ganhou!");
+            }
+            else
+            {
+             System.Console.WriteLine($"Que pena, a palavra secreta era: {pavraAleatoria}.Tente novamente");   
             }
 
             System.Console.Write("Deseja continuar?(s/N)");
