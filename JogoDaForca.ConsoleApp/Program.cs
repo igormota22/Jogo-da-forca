@@ -13,6 +13,31 @@ acaba.
 4. Deve-se apresentar um desenho da forca sendo atualizado a cada erro.
     */
 
+    public static void Main(string[] args)
+    {
+        while (true)
+        {
+            ExibirCabecalho();
+
+            string palavraAleatoria = EscolherPalavraAleatoria();
+            char[] letrasAcertadas = PreencherLetrasAcertadas(palavraAleatoria);
+            ExecutarTentativa(letrasAcertadas, palavraAleatoria);
+
+            if (!JogadorDesejaContinuar())
+            {
+                break;
+            }
+
+        }
+
+    }
+
+    static void ExibirCabecalho()
+    {
+        System.Console.WriteLine("--------------------");
+        System.Console.WriteLine("JOGO DA FORCA");
+        System.Console.WriteLine("--------------------");
+    }
 
     static string EscolherPalavraAleatoria()
     {
@@ -56,86 +81,167 @@ acaba.
         return palavraAleatoria;
     }
 
-    public static void Main(string[] args)
+    static char[] PreencherLetrasAcertadas(string palavraAleatoria)
     {
-        while (true)
+        char[] letrasAcertadas = new char[palavraAleatoria.Length];
+        for (int caractere = 0; caractere < letrasAcertadas.Length; caractere++)
         {
-            System.Console.WriteLine("--------------------");
-            System.Console.WriteLine("JOGO DA FORCA");
-            System.Console.WriteLine("--------------------");
+            letrasAcertadas[caractere] = '_';
+        }
+        return letrasAcertadas;
+    }
 
-            string pavraAleatoria = EscolherPalavraAleatoria();
-            char[] letrasAcertadas = new char[pavraAleatoria.Length];
-            for (int caractere = 0; caractere < letrasAcertadas.Length; caractere++)
+    static void ExecutarTentativa(char[] letrasAcertadas, string palavraAleatoria)
+    {
+        bool jogadorAcertouPalavra = false;
+        bool jogadorPerdeu = false;
+
+        int erros = 0;
+
+
+
+        while (jogadorPerdeu == false && jogadorAcertouPalavra == false)
+        {
+            DesenharForca(erros);
+
+            System.Console.WriteLine(letrasAcertadas);
+            System.Console.WriteLine("Tentativas Erradas: " + erros);
+
+            System.Console.Write("Digite uma letra:");
+            string? strLetra = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(strLetra))
             {
-                letrasAcertadas[caractere] = '_';
+                System.Console.WriteLine("Digite um caractere valido");
+                Console.ReadKey();
+                continue;
             }
 
-            bool jogadorAcertouPalavra = false;
-            bool jogadorPerdeu = false;
+            char letraChute = Convert.ToChar(strLetra.ToUpper());
 
-            int erros = 0;
+            bool letraFoiEncontrada = false;
 
-            while (jogadorPerdeu == false && jogadorAcertouPalavra == false)
+            for (int contador = 0; contador < palavraAleatoria.Length; contador++)
             {
+                char letraAtual = palavraAleatoria[contador];
 
-                System.Console.WriteLine(letrasAcertadas);
-                System.Console.WriteLine("Tentativas Erradas: " + erros);
-
-                System.Console.Write("Digite uma letra:");
-                string? strLetra = Console.ReadLine();
-
-                if (string.IsNullOrWhiteSpace(strLetra))
+                if (letraChute == letraAtual)
                 {
-                    System.Console.WriteLine("Digite um caractere valido");
-                    Console.ReadKey();
-                    continue;
+                    letrasAcertadas[contador] = letraAtual;
+                    letraFoiEncontrada = true;
                 }
 
-                char letraChute = Convert.ToChar(strLetra.ToUpper());
-
-                bool letraFoiEncontrada = false;
-
-                for (int contador = 0; contador < pavraAleatoria.Length; contador++)
-                {
-                    char letraAtual = pavraAleatoria[contador];
-
-                    if (letraChute == letraAtual)
-                    {
-                        letrasAcertadas[contador] = letraAtual;
-                        letraFoiEncontrada = true;
-                    }
-                    
-                }
-
-                if (letraFoiEncontrada == false)
-                {
-                    erros++;
-                }
-
-                jogadorAcertouPalavra = pavraAleatoria == string.Join("", letrasAcertadas);
-                jogadorPerdeu = erros > 5;
             }
 
-            if (jogadorAcertouPalavra)
+            if (letraFoiEncontrada == false)
             {
-                System.Console.WriteLine($"Parabens, a palavra secreta era: {pavraAleatoria}.Voce ganhou!");
-            }
-            else
-            {
-             System.Console.WriteLine($"Que pena, a palavra secreta era: {pavraAleatoria}.Tente novamente");   
+                erros++;
             }
 
-            System.Console.Write("Deseja continuar?(s/N)");
-            string? opcaoContinar = Console.ReadLine()?.ToUpper();
-
-            if (opcaoContinar != "S")
-            {
-                break;
-            }
+            jogadorAcertouPalavra = palavraAleatoria == string.Join("", letrasAcertadas);
+            jogadorPerdeu = erros > 5;
         }
 
+        if (jogadorAcertouPalavra)
+        {
+            System.Console.WriteLine($"Parabens, a palavra secreta era: {palavraAleatoria}.Voce ganhou!");
+        }
+        else
+        {
+            System.Console.WriteLine($"Que pena, a palavra secreta era: {palavraAleatoria}.Tente novamente");
+        }
     }
+
+    static void DesenharForca(int erros)
+    {
+
+        if (erros == 0)
+        {
+            Console.WriteLine(@" ___________        ");
+            Console.WriteLine(@" |/        |        ");
+            Console.WriteLine(@" |               ");
+            Console.WriteLine(@" |               ");
+            Console.WriteLine(@" |                ");
+            Console.WriteLine(@" |              ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@"_|____              ");
+        }
+        else if (erros == 1)
+        {
+            Console.WriteLine(@" ___________        ");
+            Console.WriteLine(@" |/        |        ");
+            Console.WriteLine(@" |         o        ");
+            Console.WriteLine(@" |               ");
+            Console.WriteLine(@" |                 ");
+            Console.WriteLine(@" |              ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@"_|____              ");
+        }
+        else if (erros == 2)
+        {
+            Console.WriteLine(@" ___________        ");
+            Console.WriteLine(@" |/        |        ");
+            Console.WriteLine(@" |         o        ");
+            Console.WriteLine(@" |        |       ");
+            Console.WriteLine(@" |                 ");
+            Console.WriteLine(@" |               ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@"_|____              ");
+        }
+        else if (erros == 3)
+        {
+            Console.WriteLine(@" ___________        ");
+            Console.WriteLine(@" |/        |        ");
+            Console.WriteLine(@" |         o        ");
+            Console.WriteLine(@" |         |      ");
+            Console.WriteLine(@" |         |        ");
+            Console.WriteLine(@" |                ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@"_|____              ");
+        }
+        else if (erros == 4)
+        {
+            Console.WriteLine(@" ___________        ");
+            Console.WriteLine(@" |/        |        ");
+            Console.WriteLine(@" |         o        ");
+            Console.WriteLine(@" |        /|\       ");
+            Console.WriteLine(@" |         |        ");
+            Console.WriteLine(@" |                ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@"_|____              ");
+        }
+        else if (erros == 5)
+        {
+            Console.WriteLine(@" ___________        ");
+            Console.WriteLine(@" |/        |        ");
+            Console.WriteLine(@" |         o        ");
+            Console.WriteLine(@" |        /|\       ");
+            Console.WriteLine(@" |         |        ");
+            Console.WriteLine(@" |        / \       ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@" |                  ");
+            Console.WriteLine(@"_|____              ");
+        }
+    }
+
+    static bool JogadorDesejaContinuar()
+    {
+        System.Console.Write("Deseja continuar?(s/N)");
+        string? opcaoContinar = Console.ReadLine()?.ToUpper();
+
+        if (opcaoContinar != "S")
+        {
+            return false;
+        }
+        return true;
+
+    }
+
 
 }
 
