@@ -1,6 +1,6 @@
 #  JOGO DA FORCA
 
-![]()
+![](docs/JogoDaForca.ConsoleApp_gnuvgktKwF.gif)
 
 ## Introdução
 
