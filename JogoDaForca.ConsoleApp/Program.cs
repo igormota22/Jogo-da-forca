@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 
+
 class Program
 {
 
@@ -19,7 +20,7 @@ acaba.
         {
             ExibirCabecalho();
 
-            string palavraAleatoria = EscolherPalavraAleatoria();
+            string palavraAleatoria = EscolherPalavraAleatoriaEDificuldade();
             char[] letrasAcertadas = PreencherLetrasAcertadas(palavraAleatoria);
             ExecutarTentativa(letrasAcertadas, palavraAleatoria);
 
@@ -39,10 +40,24 @@ acaba.
         System.Console.WriteLine("--------------------");
     }
 
-    static string EscolherPalavraAleatoria()
+    static string EscolherPalavraAleatoriaEDificuldade()
     {
-        string[] palavras = [
-          "ABACATE",
+        System.Console.WriteLine("--------------------");
+        System.Console.WriteLine("1 - Frutas");
+        System.Console.WriteLine("2 - Animais");
+        System.Console.WriteLine("3 - Paises");
+        System.Console.WriteLine("--------------------");
+        System.Console.Write("Escolha a dificuldade:");
+        string? opcaoDificuldade = Console.ReadLine();
+
+        string[] palavras = new string[0];
+
+        switch (opcaoDificuldade)
+        {
+            case "1":
+
+                palavras = [
+            "ABACATE",
             "ABACAXI",
             "ACEROLA",
             "AÇAÍ",
@@ -72,7 +87,81 @@ acaba.
             "UMBU",
             "UVA",
             "UVAIA"
-      ];
+];
+break;
+case "2":
+ palavras = [
+"ÁGUIA",
+"CACHORRO",
+"CAMELO",
+"CANTEIRO",
+"CAVALO",
+"COBRA",
+"COELHO",
+"CORUJA",
+"ELEFANTE",
+"FALA",
+"GATO",
+"GIRAFA",
+"GORILA",
+"HAMSTER",
+"HIPOPÓTAMO",
+"JACARÉ",
+"LEÃO",
+"LOBO",
+"MACACO",
+"MORCEGO",
+"ONÇA",
+"PATO",
+"PEIXE",
+"PORCO",
+"RATO",
+"SAPO",
+"TARTARUGA",
+"TIGRE",
+"URSO",
+"ZEBRA"
+];
+break;
+case "3":
+palavras = [
+"ÁFRICA DO SUL",
+"ALEMANHA",
+"AUSTLIA",
+"BÉLGICA",
+"BRASIL",
+"CANADÁ",
+"CHINA",
+"COREIA DO SUL",
+"ESPANHA",
+"ESTADOS UNIDOS",
+"FRANÇA",
+"GRÉCIA",
+"HOLANDA",
+"ÍNDIA",
+"IRLANDA",
+"ISRAEL",
+"ITÁLIA",
+"JAPÃO",
+"MARROCOS",
+"MÉXICO",
+"NORUEGA",
+"NOVA ZELÂNDIA",
+"POLÔNIA",
+"PORTUGAL",
+"REINO UNIDO",
+"RÚSSIA",
+"SUÉCIA",
+"SUÍÇA",
+"TAILÂNDIA",
+"TURQUIA"                    
+];
+break;
+default:
+System.Console.WriteLine("Opção invalida");
+break;
+ }
+
 
         int indiceAleatorio = RandomNumberGenerator.GetInt32(palavras.Length);
 
@@ -91,6 +180,7 @@ acaba.
         return letrasAcertadas;
     }
 
+
     static void ExecutarTentativa(char[] letrasAcertadas, string palavraAleatoria)
     {
         bool jogadorAcertouPalavra = false;
@@ -98,10 +188,11 @@ acaba.
 
         int erros = 0;
 
-
+        List<char> letrasErradas = new List<char>();
 
         while (jogadorPerdeu == false && jogadorAcertouPalavra == false)
         {
+
             DesenharForca(erros);
 
             System.Console.WriteLine(letrasAcertadas);
@@ -109,6 +200,7 @@ acaba.
 
             System.Console.Write("Digite uma letra:");
             string? strLetra = Console.ReadLine();
+
 
             if (string.IsNullOrWhiteSpace(strLetra))
             {
@@ -118,6 +210,12 @@ acaba.
             }
 
             char letraChute = Convert.ToChar(strLetra.ToUpper());
+
+            if(letrasAcertadas.Contains(letraChute) || letrasErradas.Contains(letraChute))
+            {
+                System.Console.WriteLine("Voce ja chutou essa letra");
+                continue;
+            }
 
             bool letraFoiEncontrada = false;
 
@@ -131,14 +229,21 @@ acaba.
                     letraFoiEncontrada = true;
                 }
 
+
             }
 
             if (letraFoiEncontrada == false)
             {
+                
                 erros++;
+                if (!letrasErradas.Contains(letraChute))
+                {
+                    letrasErradas.Add(letraChute);
+                }
             }
 
             jogadorAcertouPalavra = palavraAleatoria == string.Join("", letrasAcertadas);
+            System.Console.WriteLine("Letras Erradas: " + string.Join(", ", letrasErradas));
             jogadorPerdeu = erros > 5;
         }
 
