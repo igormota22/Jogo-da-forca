@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Text; // biblioteca para ultilizar o NormalizedForm 
 
 
 class Program
@@ -21,6 +22,7 @@ acaba.
             ExibirCabecalho();
 
             string palavraAleatoria = EscolherPalavraAleatoriaEDificuldade();
+            string palavraSemAcentos = RemoveAcentos(palavraAleatoria);
             char[] letrasAcertadas = PreencherLetrasAcertadas(palavraAleatoria);
             ExecutarTentativa(letrasAcertadas, palavraAleatoria);
 
@@ -90,7 +92,7 @@ acaba.
 ];
 break;
 case "2":
- palavras = [
+palavras = [
 "ÁGUIA",
 "CACHORRO",
 "CAMELO",
@@ -154,13 +156,13 @@ palavras = [
 "SUÉCIA",
 "SUÍÇA",
 "TAILÂNDIA",
-"TURQUIA"                    
+"TURQUIA"
 ];
 break;
 default:
 System.Console.WriteLine("Opção invalida");
 break;
- }
+}
 
 
         int indiceAleatorio = RandomNumberGenerator.GetInt32(palavras.Length);
@@ -168,6 +170,16 @@ break;
         string palavraAleatoria = palavras[indiceAleatorio];
 
         return palavraAleatoria;
+    }
+
+  static string RemoveAcentos(string texto)
+    {
+        //esse metodo primeiro converte uma string para um formato Unicode(Unicode é um padrão de codificação de caracteres universal e em constante evolução. que descreve cada caractere com um nome, um ponto de código e um conjunto de propriedades (script, categoria, direcionalidade, letras maiúsculas/minúsculas, etc.). O Comitê Técnico Unicode (UTC), dentro do Consórcio Unicode, mantém a sincronização com o padrão ISO/IEC 10646..)
+        //NormalizationForm.FormD separa os caracteres base dos acentos
+        //Replace separa os acentos da string
+        string normalized = texto.Normalize(NormalizationForm.FormD);
+        return normalized.Replace("́", "").Replace("̃", "").Replace("̀", "").Replace("̂", "").Replace("̈", "");
+        
     }
 
     static char[] PreencherLetrasAcertadas(string palavraAleatoria)
@@ -211,7 +223,7 @@ break;
 
             char letraChute = Convert.ToChar(strLetra.ToUpper());
 
-            if(letrasAcertadas.Contains(letraChute) || letrasErradas.Contains(letraChute))
+            if (letrasAcertadas.Contains(letraChute) || letrasErradas.Contains(letraChute))
             {
                 System.Console.WriteLine("Voce ja chutou essa letra");
                 continue;
@@ -223,7 +235,7 @@ break;
             {
                 char letraAtual = palavraAleatoria[contador];
 
-                if (letraChute == letraAtual)
+                if (RemoveAcentos(letraChute.ToString()) == RemoveAcentos(letraAtual.ToString()))
                 {
                     letrasAcertadas[contador] = letraAtual;
                     letraFoiEncontrada = true;
@@ -234,7 +246,7 @@ break;
 
             if (letraFoiEncontrada == false)
             {
-                
+
                 erros++;
                 if (!letrasErradas.Contains(letraChute))
                 {
