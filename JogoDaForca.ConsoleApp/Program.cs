@@ -1,5 +1,6 @@
-ï»¿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text; // biblioteca para ultilizar o NormalizedForm 
+using System.Globalization; // biblioteca para ultilizar o NormalizedForm 
 
 
 class Program
@@ -7,10 +8,10 @@ class Program
 
     /*
     Requisitos
-1. Ao iniciar o jogo, deve ser selecionada uma palavra aleatÃ³ria Ã  partir de uma lista.
-2. O jogador poderÃ¡ chutar a palavra secreta letra por letra, cada letra certa deverÃ¡ ser apresentada,
+1. Ao iniciar o jogo, deve ser selecionada uma palavra aleatória à partir de uma lista.
+2. O jogador poderá chutar a palavra secreta letra por letra, cada letra certa deverá ser apresentada,
 assim como as letras erradas.
-3. O jogador poderÃ¡ cometer atÃ© cinco erros, caso erre pela quinta vez, ou acerte a palavra a partida
+3. O jogador poderá cometer até cinco erros, caso erre pela quinta vez, ou acerte a palavra a partida
 acaba.
 4. Deve-se apresentar um desenho da forca sendo atualizado a cada erro.
     */
@@ -22,7 +23,7 @@ acaba.
             ExibirCabecalho();
 
             string palavraAleatoria = EscolherPalavraAleatoriaEDificuldade();
-            string palavraSemAcentos = RemoveAcentos(palavraAleatoria);
+            string palavraSemAcentos = RemoverAcentos(palavraAleatoria);
             char[] letrasAcertadas = PreencherLetrasAcertadas(palavraAleatoria);
             ExecutarTentativa(letrasAcertadas, palavraAleatoria);
 
@@ -62,24 +63,24 @@ acaba.
             "ABACATE",
             "ABACAXI",
             "ACEROLA",
-            "AÃ‡AÃ",
-            "ARAÃ‡Ã",
+            "AÇAÍ",
+            "ARAÇÁ",
             "ABACATE",
             "BACABA",
             "BACURI",
             "BANANA",
-            "CAJÃ",
+            "CAJÁ",
             "CAJU",
             "CARAMBOLA",
-            "CUPUAÃ‡U",
+            "CUPUAÇU",
             "GRAVIOLA",
             "GOIABA",
             "JABUTICABA",
             "JENIPAPO",
-            "MAÃ‡Ãƒ",
+            "MAÇÃ",
             "MANGABA",
             "MANGA",
-            "MARACUJÃ",
+            "MARACUJÁ",
             "MURICI",
             "PEQUI",
             "PITANGA",
@@ -93,7 +94,7 @@ acaba.
 break;
 case "2":
 palavras = [
-"ÃGUIA",
+"ÁGUIA",
 "CACHORRO",
 "CAMELO",
 "CANTEIRO",
@@ -107,13 +108,13 @@ palavras = [
 "GIRAFA",
 "GORILA",
 "HAMSTER",
-"HIPOPÃ“TAMO",
-"JACARÃ‰",
-"LEÃƒO",
+"HIPOPÓTAMO",
+"JACARÉ",
+"LEÃO",
 "LOBO",
 "MACACO",
 "MORCEGO",
-"ONÃ‡A",
+"ONÇA",
 "PATO",
 "PEIXE",
 "PORCO",
@@ -127,40 +128,40 @@ palavras = [
 break;
 case "3":
 palavras = [
-"ÃFRICA DO SUL",
+"ÁFRICA DO SUL",
 "ALEMANHA",
 "AUSTLIA",
-"BÃ‰LGICA",
+"BÉLGICA",
 "BRASIL",
-"CANADÃ",
+"CANADÁ",
 "CHINA",
 "COREIA DO SUL",
 "ESPANHA",
 "ESTADOS UNIDOS",
-"FRANÃ‡A",
-"GRÃ‰CIA",
+"FRANÇA",
+"GRÉCIA",
 "HOLANDA",
-"ÃNDIA",
+"ÍNDIA",
 "IRLANDA",
 "ISRAEL",
-"ITÃLIA",
-"JAPÃƒO",
+"ITÁLIA",
+"JAPÃO",
 "MARROCOS",
-"MÃ‰XICO",
+"MÉXICO",
 "NORUEGA",
-"NOVA ZELÃ‚NDIA",
-"POLÃ”NIA",
+"NOVA ZELÂNDIA",
+"POLÔNIA",
 "PORTUGAL",
 "REINO UNIDO",
-"RÃšSSIA",
-"SUÃ‰CIA",
-"SUÃÃ‡A",
-"TAILÃ‚NDIA",
+"RÚSSIA",
+"SUÉCIA",
+"SUÍÇA",
+"TAILÂNDIA",
 "TURQUIA"
 ];
 break;
 default:
-System.Console.WriteLine("OpÃ§Ã£o invalida");
+System.Console.WriteLine("Opção invalida");
 break;
 }
 
@@ -172,15 +173,11 @@ break;
         return palavraAleatoria;
     }
 
-  static string RemoveAcentos(string texto)
-    {
-        //esse metodo primeiro converte uma string para um formato Unicode(Unicode Ã© um padrÃ£o de codificaÃ§Ã£o de caracteres universal e em constante evoluÃ§Ã£o. que descreve cada caractere com um nome, um ponto de cÃ³digo e um conjunto de propriedades (script, categoria, direcionalidade, letras maiÃºsculas/minÃºsculas, etc.). O ComitÃª TÃ©cnico Unicode (UTC), dentro do ConsÃ³rcio Unicode, mantÃ©m a sincronizaÃ§Ã£o com o padrÃ£o ISO/IEC 10646..)
-        //NormalizationForm.FormD separa os caracteres base dos acentos
-        //Replace separa os acentos da string
-        string normalized = texto.Normalize(NormalizationForm.FormD);
-        return normalized.Replace("Ì", "").Replace("Ìƒ", "").Replace("Ì€", "").Replace("Ì‚", "").Replace("Ìˆ", "");
-        
-    }
+static string RemoverAcentos(string texto)
+{
+    return string.Concat(texto.Normalize(NormalizationForm.FormD)
+    .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark));
+}
 
     static char[] PreencherLetrasAcertadas(string palavraAleatoria)
     {
@@ -201,6 +198,29 @@ break;
         int erros = 0;
 
         List<char> letrasErradas = new List<char>();
+
+        System.Console.Write("Gostaria de chutar uma palavra(1 tentativa)s/N: ");
+        string? opcaoChutarPalavra = Console.ReadLine();
+
+        if (opcaoChutarPalavra == "s")
+        {
+            DesenharForca(erros);
+            System.Console.WriteLine(letrasAcertadas); 
+            System.Console.Write("Chute a palavra:");
+            string? palavraChutada = Console.ReadLine();
+
+           if (palavraChutada != null && RemoverAcentos(palavraAleatoria).ToUpper() == RemoverAcentos(palavraChutada).ToUpper())
+            {
+                jogadorAcertouPalavra = true;
+                
+            }
+            else
+            {
+                System.Console.WriteLine("Voce errou!");
+                erros++;
+            }
+        }
+
 
         while (jogadorPerdeu == false && jogadorAcertouPalavra == false)
         {
@@ -235,7 +255,7 @@ break;
             {
                 char letraAtual = palavraAleatoria[contador];
 
-                if (RemoveAcentos(letraChute.ToString()) == RemoveAcentos(letraAtual.ToString()))
+                if (RemoverAcentos(letraChute.ToString()) == RemoverAcentos(letraAtual.ToString()))
                 {
                     letrasAcertadas[contador] = letraAtual;
                     letraFoiEncontrada = true;
@@ -246,7 +266,6 @@ break;
 
             if (letraFoiEncontrada == false)
             {
-
                 erros++;
                 if (!letrasErradas.Contains(letraChute))
                 {
@@ -361,4 +380,3 @@ break;
 
 
 }
-
